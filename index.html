@@ -113,22 +113,35 @@ canvas{display:block;width:100%;border-radius:0 0 16px 16px;cursor:none;}
 const SUPABASE_URL = 'https://bjqijtltemjzqsozhrfr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqcWlqdGx0ZW1qenFzb3pocmZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzI1NjAsImV4cCI6MjA5MDkwODU2MH0.dPVX9R2vwOlWsL0zMc-GwL_LYHV73W4YAcC7zKzYJec';
 
-async function sbFetch(path, opts={}){
-  try{
-    const r=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
-      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',...(opts.headers||{})},
-      ...opts
-    });
-    if(r.ok&&r.headers.get('content-type')?.includes('json')) return await r.json();
-    return null;
-  }catch(e){console.warn('Supabase error:',e);return null;}
-}
 async function loadLeaderboard(){
-  const d=await sbFetch('scores?order=score.desc&limit=10',{method:'GET',headers:{'Range':'0-9'}});
-  return d||[];
+  try{
+    const r=await fetch(SUPABASE_URL+'/rest/v1/scores?select=player_name,score,world&order=score.desc&limit=10',{
+      method:'GET',
+      headers:{
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Content-Type':'application/json'
+      }
+    });
+    if(!r.ok){const t=await r.text();console.warn('Leaderboard failed:',r.status,t);return[];}
+    return await r.json();
+  }catch(e){console.warn('Leaderboard error:',e);return[];}
 }
 async function saveScore(name,sc,world){
-  await sbFetch('scores',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({player_name:name,score:sc,world})});
+  try{
+    const r=await fetch(SUPABASE_URL+'/rest/v1/scores',{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_KEY,
+        'Authorization':'Bearer '+SUPABASE_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({player_name:name,score:sc,world:world})
+    });
+    if(!r.ok){const t=await r.text();console.warn('Save failed:',r.status,t);}
+    else{console.log('Score saved OK:',name,sc);}
+  }catch(e){console.warn('Save error:',e);}
 }
 
 // ════════════════════════════════
@@ -685,8 +698,14 @@ function startGame(){
 async function endGame(){
   gameRunning=false;stopBgMusic();cancelAnimationFrame(frameId);playGameOver();
   if(score>highScore){highScore=score;localStorage.setItem('jumpyFoxHS',highScore);}
-  if(playerName)await saveScore(playerName,score,WORLDS[currentEnvIdx].name);
+  // Show game-over screen immediately while save happens in background
   showMenu(false);
+  // Save score and then refresh leaderboard once saved
+  if(playerName && score > 0){
+    await saveScore(playerName, score, WORLDS[currentEnvIdx].name);
+    // Refresh leaderboard after save so new score appears
+    await renderLeaderboard(playerName, score);
+  }
 }
 
 // ════════════════════════════════
@@ -705,14 +724,28 @@ async function showMenu(isQuit){
 async function renderLeaderboard(myName,myScore){
   const sbRows=document.getElementById('sbRows');
   sbRows.innerHTML='<div id="sbLoading">Loading scores… 🦊</div>';
-  const rows=await loadLeaderboard();
-  if(!rows||rows.length===0){sbRows.innerHTML='<div id="sbLoading" style="color:#aaa">No scores yet — be the first! 🦊</div>';return;}
-  const meIdx=rows.findIndex(r=>r.player_name===myName&&(myScore===null||r.score===myScore));
+  let rows=[];
+  try{ rows=await loadLeaderboard(); } catch(e){}
+  if(!rows||rows.length===0){
+    sbRows.innerHTML='<div id="sbLoading" style="color:#aaa;padding:12px">No scores yet — be the first! 🦊<br><span style="font-size:11px;color:#666">If you have played before, check Supabase RLS policies.</span></div>';
+    return;
+  }
+  // Find my best score row (match by name, pick highest score if multiple)
+  let meIdx=-1;
+  if(myName){
+    if(myScore!==null){
+      meIdx=rows.findIndex(r=>r.player_name===myName&&r.score===myScore);
+      if(meIdx===-1) meIdx=rows.findIndex(r=>r.player_name===myName);
+    } else {
+      meIdx=rows.findIndex(r=>r.player_name===myName);
+    }
+  }
   sbRows.innerHTML='';
   rows.forEach((r,i)=>{
-    const div=document.createElement('div');div.className='sb-row'+(i===meIdx?' me':'');
-    const medal=['🥇','🥈','🥉'][i]||`${i+1}`;
-    div.innerHTML=`<span class="rank">${medal}</span><span class="nm">${esc(r.player_name)}</span><span class="pts">${r.score.toLocaleString()}</span>`;
+    const div=document.createElement('div');
+    div.className='sb-row'+(i===meIdx?' me':'');
+    const medal=['🥇','🥈','🥉'][i]||(i+1);
+    div.innerHTML=`<span class="rank">${medal}</span><span class="nm">${esc(r.player_name)}</span><span class="pts">${Number(r.score).toLocaleString()}</span>`;
     sbRows.appendChild(div);
   });
   if(meIdx===-1&&myName&&myScore!==null){
