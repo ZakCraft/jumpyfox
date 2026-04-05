@@ -21,28 +21,36 @@ canvas{display:block;width:100%;border-radius:0 0 16px 16px;cursor:none;}
 /* milestone bar */
 #milestoneBar{position:absolute;top:36px;left:0;right:0;height:5px;background:rgba(0,0,0,0.25);}
 #milestoneProgress{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));width:0%;transition:width 0.35s;}
-/* overlay */
-#overlay{position:absolute;top:41px;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:rgba(0,0,0,0.84);border-radius:0 0 16px 16px;color:white;text-align:center;padding:10px 14px 14px;gap:7px;overflow-y:auto;}
-#overlay h1{font-size:clamp(24px,5.5vw,48px);color:var(--gold);text-shadow:3px 3px 0 var(--orange),5px 5px 0 rgba(0,0,0,0.3);letter-spacing:2px;}
-#overlayMsg{font-family:'Nunito',sans-serif;font-size:clamp(12px,1.9vw,15px);color:#ffe;max-width:380px;line-height:1.45;}
-.btn{background:linear-gradient(135deg,var(--orange),#FF8C00);border:3px solid var(--gold);color:white;font-family:'Fredoka One',cursive;font-size:clamp(14px,2.8vw,21px);padding:9px 28px;border-radius:50px;cursor:pointer;box-shadow:0 5px 16px rgba(255,107,26,0.5);transition:transform 0.1s;-webkit-tap-highlight-color:transparent;}
+/* overlay — two-column layout */
+#overlay{position:absolute;top:41px;left:0;right:0;bottom:0;display:flex;flex-direction:row;align-items:stretch;background:rgba(0,0,0,0.88);border-radius:0 0 16px 16px;color:white;overflow:hidden;}
+/* LEFT PANEL */
+#overlayLeft{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 14px 14px;gap:9px;flex:0 0 54%;text-align:center;border-right:1px solid rgba(255,215,0,0.15);}
+#overlay h1{font-size:clamp(20px,4.5vw,42px);color:var(--gold);text-shadow:3px 3px 0 var(--orange),5px 5px 0 rgba(0,0,0,0.3);letter-spacing:2px;margin:0;}
+#overlayMsg{font-family:'Nunito',sans-serif;font-size:clamp(10px,1.7vw,13px);color:#ffe;line-height:1.4;margin:0;}
+.btn{background:linear-gradient(135deg,var(--orange),#FF8C00);border:3px solid var(--gold);color:white;font-family:'Fredoka One',cursive;font-size:clamp(13px,2.5vw,20px);padding:9px 26px;border-radius:50px;cursor:pointer;box-shadow:0 5px 16px rgba(255,107,26,0.5);transition:transform 0.1s;-webkit-tap-highlight-color:transparent;}
 .btn:active{transform:scale(0.96);}
 .btn.sec{background:linear-gradient(135deg,#444,#666);border-color:#aaa;}
 #levelBadge{background:var(--orange);border:3px solid var(--gold);border-radius:50px;padding:4px 14px;font-size:clamp(13px,2.2vw,19px);color:white;}
-/* scoreboard */
-#scoreboard{width:100%;max-width:430px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,215,0,0.28);border-radius:13px;overflow:hidden;font-family:'Nunito',sans-serif;}
-#scoreboard .sb-head{display:grid;grid-template-columns:34px 1fr auto 72px;padding:6px 12px;background:rgba(255,215,0,0.16);font-weight:800;font-size:clamp(9px,1.6vw,12px);color:var(--gold);gap:4px;}
-.sb-row{display:grid;grid-template-columns:34px 1fr auto 72px;padding:5px 12px;border-top:1px solid rgba(255,255,255,0.06);font-size:clamp(9px,1.6vw,12px);align-items:center;gap:4px;}
-.sb-row.me{background:rgba(255,215,0,0.11);}
-.sb-row .rank{color:var(--gold);font-weight:800;}
-.sb-row .nm{color:#eee;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sb-row .wld{color:#aad4ff;font-size:clamp(8px,1.4vw,11px);white-space:nowrap;text-align:center;opacity:0.85;}
-.sb-row .pts{color:#7fff7f;font-weight:700;text-align:right;}
-#sbLoading{color:#777;font-size:12px;padding:10px;font-family:'Nunito',sans-serif;}
 /* name form */
 #nameForm{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center;}
-#nameInput{font-family:'Fredoka One',cursive;font-size:clamp(13px,2.3vw,17px);padding:7px 14px;border-radius:50px;border:3px solid var(--gold);background:rgba(255,255,255,0.1);color:white;outline:none;width:185px;}
+#nameInput{font-family:'Fredoka One',cursive;font-size:clamp(12px,2vw,16px);padding:7px 14px;border-radius:50px;border:3px solid var(--gold);background:rgba(255,255,255,0.1);color:white;outline:none;width:150px;}
 #nameInput::placeholder{color:rgba(255,255,255,0.38);}
+/* RIGHT PANEL — leaderboard */
+#overlayRight{display:flex;flex-direction:column;flex:0 0 46%;overflow:hidden;}
+#sbTitle{font-family:'Fredoka One',cursive;font-size:clamp(11px,1.8vw,15px);color:var(--gold);padding:7px 10px 4px;text-align:center;letter-spacing:0.5px;border-bottom:1px solid rgba(255,215,0,0.2);background:rgba(255,215,0,0.07);flex-shrink:0;}
+/* scoreboard fills the right panel */
+#scoreboard{display:flex;flex-direction:column;flex:1;overflow:hidden;font-family:'Nunito',sans-serif;}
+#scoreboard .sb-head{display:grid;grid-template-columns:26px 1fr auto 58px;padding:5px 8px;background:rgba(255,215,0,0.13);font-weight:800;font-size:clamp(8px,1.4vw,11px);color:var(--gold);gap:3px;flex-shrink:0;}
+#sbRows{flex:1;overflow-y:auto;}
+#sbRows::-webkit-scrollbar{width:3px;}
+#sbRows::-webkit-scrollbar-thumb{background:rgba(255,215,0,0.3);border-radius:2px;}
+.sb-row{display:grid;grid-template-columns:26px 1fr auto 58px;padding:4px 8px;border-top:1px solid rgba(255,255,255,0.06);font-size:clamp(8px,1.4vw,11px);align-items:center;gap:3px;}
+.sb-row.me{background:rgba(255,215,0,0.13);border-left:2px solid var(--gold);}
+.sb-row .rank{color:var(--gold);font-weight:800;font-size:clamp(9px,1.5vw,13px);}
+.sb-row .nm{color:#eee;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;}
+.sb-row .wld{color:#90caf9;font-size:clamp(7px,1.2vw,10px);white-space:nowrap;text-align:right;opacity:0.9;}
+.sb-row .pts{color:#69f0ae;font-weight:800;text-align:right;}
+#sbLoading{color:#666;font-size:11px;padding:12px 8px;font-family:'Nunito',sans-serif;text-align:center;}
 /* pause */
 #pauseOverlay{position:absolute;top:41px;left:0;right:0;bottom:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);border-radius:0 0 16px 16px;gap:14px;}
 #pauseOverlay h2{font-size:clamp(26px,5.5vw,44px);color:var(--gold);text-shadow:2px 2px 0 var(--orange);}
@@ -77,17 +85,24 @@ canvas{display:block;width:100%;border-radius:0 0 16px 16px;cursor:none;}
   <div id="scorePopups"></div>
 
   <div id="overlay">
-    <h1 id="overlayTitle">🦊 Jumpy Fox</h1>
-    <p id="overlayMsg">Help Foxy run through amazing worlds!<br>Use <b>← →</b> arrows and <b>SPACE</b> to jump!</p>
-    <div id="scoreboard">
-      <div class="sb-head"><span>#</span><span>Player</span><span style="text-align:center">World</span><span style="text-align:right">Score</span></div>
-      <div id="sbRows"><div id="sbLoading">Loading scores… 🦊</div></div>
+    <!-- LEFT: title + play controls -->
+    <div id="overlayLeft">
+      <h1 id="overlayTitle">🦊 Jumpy Fox</h1>
+      <p id="overlayMsg">Help Foxy run through amazing worlds!<br>Use <b>← →</b> arrows + <b>SPACE</b> to jump!<br><span style="opacity:0.7;font-size:0.9em">📱 Tap screen to jump on mobile</span></p>
+      <div id="nameForm">
+        <input id="nameInput" maxlength="16" placeholder="Your name…" autocomplete="off" spellcheck="false"/>
+        <button class="btn" onclick="handleStart()">▶ Play!</button>
+      </div>
+      <p id="highscoreDisp" style="color:#aaa;font-size:11px;font-family:Nunito,sans-serif;"></p>
     </div>
-    <div id="nameForm">
-      <input id="nameInput" maxlength="16" placeholder="Your name…" autocomplete="off" spellcheck="false"/>
-      <button class="btn" onclick="handleStart()">▶ Play!</button>
+    <!-- RIGHT: leaderboard -->
+    <div id="overlayRight">
+      <div id="sbTitle">🏆 Top Players</div>
+      <div id="scoreboard">
+        <div class="sb-head"><span>#</span><span>Player</span><span style="text-align:right">World</span><span style="text-align:right">Score</span></div>
+        <div id="sbRows"><div id="sbLoading">Loading… 🦊</div></div>
+      </div>
     </div>
-    <p id="highscoreDisp" style="color:#aaa;font-size:12px;font-family:Nunito,sans-serif;margin-top:1px;"></p>
   </div>
 
   <div id="pauseOverlay">
@@ -134,7 +149,7 @@ async function loadLeaderboard(){
       if(!seen.has(key)) seen.set(key,row);
     }
     // Return top 5 unique players by score
-    return Array.from(seen.values()).slice(0,5);
+    return Array.from(seen.values()).slice(0,10);
   }catch(e){console.warn('Leaderboard error:',e);return[];}
 }
 async function saveScore(name,sc,world){
@@ -725,7 +740,7 @@ async function endGame(){
 async function showMenu(isQuit){
   document.getElementById('overlayTitle').textContent=isQuit?'🦊 Jumpy Fox':'🦊 Game Over!';
   document.getElementById('overlayMsg').innerHTML=isQuit
-    ?'Help Foxy run through amazing worlds!<br>Use <b>← →</b> arrows + <b>SPACE</b> to jump!<br><span style="font-size:0.85em;opacity:0.8">📱 On mobile: tap screen to jump, use buttons to move</span>'
+    ?'Help Foxy run through amazing worlds!<br>Use <b>← →</b> arrows + <b>SPACE</b> to jump!<br><span style="font-family:Nunito,sans-serif;font-size:0.85em;opacity:0.75">📱 Tap screen to jump on mobile</span>'
     :`You scored <b style="color:#FFD700">${score}</b> points!<br>You reached <b>${WORLDS[currentEnvIdx].name}</b>!${score>=highScore?'<br>🎉 New Best!':''}`;
   document.getElementById('highscoreDisp').textContent=highScore>0?`🏆 Your Best: ${highScore}`:'';
   document.getElementById('nameInput').value=playerName;
